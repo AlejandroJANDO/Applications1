@@ -62,6 +62,9 @@
     <div class="container">
         <div class="applications" id="applications">
             <!-- Applications will be dynamically added here -->
+            <div class="application" onclick="openForm('form1')">Application 1</div>
+            <div class="application" onclick="openForm('form2')">Application 2</div>
+            <!-- Add more applications as needed -->
         </div>
 
         <div class="editor" id="editor">
@@ -69,13 +72,17 @@
             <input type="text" class="access-code-input" id="accessCode" placeholder="Enter Access Code">
             <button class="access-code-button" onclick="verifyAccessCode()">Access</button>
         </div>
+
+        <div id="formContainer">
+            <!-- Form content will be dynamically added here -->
+        </div>
     </div>
 
     <script>
         function verifyAccessCode() {
             var accessCode = document.getElementById('accessCode').value;
 
-            // Replace this with actual access code verification logic
+            // Placeholder: Replace this with actual access code verification logic on the server side
             if (accessCode === 'your_access_code') {
                 showEditor();
             } else {
@@ -85,6 +92,12 @@
 
         function showEditor() {
             document.getElementById('editor').style.display = 'block';
+        }
+
+        function openForm(formName) {
+            // Placeholder: Replace this with code to load the form dynamically
+            var formContainer = document.getElementById('formContainer');
+            formContainer.innerHTML = '<h3>' + formName + '</h3><form>Your form HTML here</form>';
         }
     </script>
 </body>
