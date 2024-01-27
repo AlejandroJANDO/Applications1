@@ -1,35 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Website Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Game</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: black;
+      color: white;
+    }
+
+    #welcome-screen, #game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #game-container {
+      display: none;
+    }
+
+    .target {
+      width: 30px;
+      height: 30px;
+      background-color: red;
+      margin: 10px;
+      cursor: pointer;
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    #user-dot {
+      width: 30px;
+      height: 30px;
+      background-color: blue;
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is my GitHub Pages website.</p>
-    <!-- Your code goes here -->
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click Game</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="welcome-screen">
-        <h1>Hello, World!</h1>
-        <button onclick="startGame()">Start Game</button>
-    </div>
 
-    <div id="game-container" style="display: none;">
-        <div id="target"></div>
-        <p id="score">Score: <span id="score-value">0</span></p>
-    </div>
+  <div id="welcome-screen">
+    <h1>Welcome to the Click Game</h1>
+    <button onclick="startGame()">Start Game</button>
+  </div>
 
-    <script src="script.js"></script>
+  <div id="game-container">
+    <h2>Score: <span id="score">0</span></h2>
+    <div class="target" id="target1"></div>
+    <div class="target" id="target2"></div>
+    <div class="target" id="target3"></div>
+    <div class="target" id="target4"></div>
+    <div class="target" id="target5"></div>
+    <div id="user-dot"></div>
+  </div>
+
+  <script>
+    let score = 0;
+
+    function startGame() {
+      document.getElementById('welcome-screen').style.display = 'none';
+      document.getElementById('game-container').style.display = 'flex';
+      loadProgress();
+      moveTargets();
+      initUserDot();
+    }
+
+    function moveTargets() {
+      const targets = document.querySelectorAll('.target');
+
+      targets.forEach((target, index) => {
+        moveTarget(target, index);
+      });
+    }
+
+    function moveTarget(target, index) {
+      target.onclick = function() {
+        if (!target.classList.contains('clicked')) {
+          target.classList.add('clicked');
+          increaseScore();
+          saveProgress(index);
+          moveTargetToRandomLocation(target, index);
+        }
+      };
+    }
+
+    function moveTargetToRandomLocation(target, index) {
+      const maxX = window.innerWidth - target.clientWidth;
+      const maxY = window.innerHeight - target.clientHeight;
+
+      const newX = Math.floor(Math.random() * maxX);
+      const newY = Math.floor(Math.random() * maxY);
+
+      target.style.left = newX + 'px';
+      target.style.top = newY + 'px';
+    }
+
+    function increaseScore() {
+      score++;
+      document.getElementById('score').innerText = score;
+      saveScore();
+    }
+
+    function saveProgress(index) {
+      // Implement saving progress logic if needed
+    }
+
+    function loadProgress() {
+      // Implement loading progress logic if needed
+      let savedScore = localStorage.getItem('score');
+      if (savedScore) {
+        score = parseInt(savedScore);
+        document.getElementById('score').innerText = score;
+      }
+    }
+
+    function saveScore() {
+      localStorage.setItem('score', score.toString());
+    }
+
+    function initUserDot() {
+      const userDot = document.getElementById('user-dot');
+
+      document.addEventListener('mousemove', (e) => {
+        userDot.style.left = e.clientX - userDot.clientWidth / 2 + 'px';
+        userDot.style.top = e.clientY - userDot.clientHeight / 2 + 'px';
+
+        checkCollision(userDot);
+      });
+    }
+
+    function checkCollision(userDot) {
+      const targets = document.querySelectorAll('.target');
+
+      targets.forEach((target, index) => {
+        if (!target.classList.contains('clicked') && isColliding(userDot, target)) {
+          moveTargetToRandomLocation(target, index);
+          increaseScore();
+        }
+      });
+    }
+
+    function isColliding(element1, element2) {
+      const rect1 = element1.getBoundingClientRect();
+      const rect2 = element2.getBoundingClientRect();
+
+      return (
+        rect1.top < rect2.bottom &&
+        rect1.bottom > rect2.top &&
+        rect1.left < rect2.right &&
+        rect1.right > rect2.left
+      );
+    }
+
+    window.onunload = function() {
+      // Implement saving on unload if needed
+    };
+  </script>
+
 </body>
 </html>
